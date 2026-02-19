@@ -1,0 +1,17 @@
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\bin\Debug\KEYSTOCK_Desktop.exe.config
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\bin\Debug\KEYSTOCK_Desktop.exe
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\bin\Debug\KEYSTOCK_Desktop.pdb
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\obj\Debug\KEYSTOCK_Desktop.csproj.AssemblyReference.cache
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\obj\Debug\KEYSTOCK_Desktop.Properties.Resources.resources
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\obj\Debug\KEYSTOCK_Desktop.csproj.GenerateResource.cache
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\obj\Debug\KEYSTOCK_Desktop.csproj.CoreCompileInputs.cache
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\obj\Debug\KEYSTOCK_Desktop.exe
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\obj\Debug\KEYSTOCK_Desktop.pdb
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\obj\Debug\KEYSTOCK_Desktop.frmLogin.resources
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\obj\Debug\KEYSTOCK_Desktop.Formularios.frmPrincipal.resources
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\obj\Debug\KEYSTOCK_Desktop.Formularios.frmProductos.resources
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\obj\Debug\KEYSTOCK_Desktop.Formularios.frmMovimientos.resources
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\obj\Debug\KEYSTOCK_Desktop.Formularios.frmProveedores.resources
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\obj\Debug\KEYSTOCK_Desktop.Formularios.frmVinculoProv.resources
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\obj\Debug\KEYSTOCK_Desktop.Formularios.frmRoles.resources
+C:\Users\Ferna\source\repos\KEYSTOCK_Desktop\KEYSTOCK_Desktop\obj\Debug\KEYSTOCK_Desktop.Formularios.frmUsuarios.resources
