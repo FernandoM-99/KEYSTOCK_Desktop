@@ -160,5 +160,8 @@
   <ItemGroup>
     <None Include="Source\cerrar-con-llave.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include=".gitignore" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
