@@ -1,4 +1,5 @@
-﻿using KEYSTOCK_Desktop.Modelos;
+﻿using KEYSTOCK_Desktop.CapaDatos;
+using KEYSTOCK_Desktop.Modelos;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,7 +30,38 @@ namespace KEYSTOCK_Desktop.Formularios
 
             // 3. Inicializamos la fecha para que no aparezca vacía al inicio
             lblFecha.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+
+            try
+            {
+                ConfigurarColumnasCarrito();
+                LlenarComboProductos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar datos iniciales: " + ex.Message);
+            }
         }
+
+        private void LlenarComboProductos()
+        {
+            ProductoDAL prodDal = new ProductoDAL();
+            DataTable dt = prodDal.ObtenerListaSimple();
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                // Limpiar antes de asignar
+                cmbProductos.DataSource = null;
+
+                // Configurar mapeo
+                cmbProductos.DisplayMember = "Nombre";
+                cmbProductos.ValueMember = "ProductoID";
+
+                // Asignar fuente de datos
+                cmbProductos.DataSource = dt;
+                cmbProductos.SelectedIndex = -1;
+            }
+        }
+
 
         private void tmrReloj_Tick(object sender, EventArgs e)
         {
@@ -161,6 +193,80 @@ namespace KEYSTOCK_Desktop.Formularios
                     e.Cancel = true; // Cancela el evento de cierre
                 }
             }
+        }
+
+        private void btnFinalizarVenta_Click(object sender, EventArgs e)
+        {
+            MovimientoDAL movDal = new MovimientoDAL();
+
+            foreach (DataGridViewRow fila in dgvCarrito.Rows)
+            {
+                if (fila.Cells["ProductoID"].Value != null)
+                {
+                    int id = Convert.ToInt32(fila.Cells["ProductoID"].Value);
+                    int cant = Convert.ToInt32(fila.Cells["Cantidad"].Value);
+                    decimal precio = Convert.ToDecimal(fila.Cells["Precio"].Value);
+
+                    // Se registra como Salida y con Referencia "VENTA POS"
+                    movDal.RegistrarMovimiento(id, UserSession.UsuarioID, null, "Salida", cant, "VENTA POS", precio);
+                }
+            }
+
+            dgvCarrito.Rows.Clear();
+            MessageBox.Show("Venta registrada con éxito.");
+        }
+
+        private void puntoDeVentaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            pnlPOS.Visible = true;
+            pnlPOS.BringToFront();
+        }
+
+        private void btnAgregar_Click(object sender, EventArgs e)
+        {
+            // 1. Validaciones básicas
+            if (cmbProductos.SelectedValue == null || string.IsNullOrWhiteSpace(txtCantidad.Text))
+            {
+                MessageBox.Show("Seleccione un producto y asigne una cantidad.");
+                return;
+            }
+
+            // 2. Obtener datos de los controles
+            int idProd = Convert.ToInt32(cmbProductos.SelectedValue);
+            string nombre = cmbProductos.Text;
+            int cant = Convert.ToInt32(txtCantidad.Text);
+
+            // Usamos el precio como "CostoUnitario" para la bitácora
+            decimal precio = decimal.Parse(txtPrecio.Text);
+            decimal subtotal = cant * precio;
+
+            // 3. Agregar la fila (Ahora sí encontrará las columnas)
+            dgvCarrito.Rows.Add(idProd, nombre, cant, precio, subtotal);
+
+            // 4. Limpiar campos para la siguiente entrada
+            txtCantidad.Clear();
+            txtPrecio.Clear();
+            cmbProductos.SelectedIndex = -1;
+        }
+
+        private void ConfigurarColumnasCarrito()
+        {
+            // Limpiamos cualquier residuo previo
+            dgvCarrito.Columns.Clear();
+
+            // Agregamos las columnas necesarias para la venta
+            dgvCarrito.Columns.Add("ProductoID", "ID");
+            dgvCarrito.Columns.Add("Nombre", "Producto");
+            dgvCarrito.Columns.Add("Cantidad", "Cant.");
+            dgvCarrito.Columns.Add("Precio", "Precio Unit.");
+            dgvCarrito.Columns.Add("Subtotal", "Subtotal");
+
+            // Opcional: Hacer que la columna ID no sea visible para el usuario
+            dgvCarrito.Columns["ProductoID"].Visible = false;
+
+            // Ajustar el diseño
+            dgvCarrito.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
     }
 }

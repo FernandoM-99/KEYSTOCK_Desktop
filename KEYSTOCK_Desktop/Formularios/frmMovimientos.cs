@@ -51,6 +51,7 @@ namespace KEYSTOCK_Desktop.Formularios
             int idProd = Convert.ToInt32(cmbProductos.SelectedValue);
             string tipo = cmbTipo.SelectedItem.ToString();
             int cant = Convert.ToInt32(txtCantidad.Text);
+            decimal costo = Convert.ToInt32(txtCosto.Text);
 
             // Obtenemos el ID del proveedor si hay uno seleccionado
             int? idProv = null;
@@ -66,7 +67,7 @@ namespace KEYSTOCK_Desktop.Formularios
 
             try
             {
-                if (dal.RegistrarMovimiento(idProd, UserSession.UsuarioID, idProv, tipo, cant, txtReferencia.Text))
+                if (dal.RegistrarMovimiento(idProd, UserSession.UsuarioID, idProv, tipo, cant, txtReferencia.Text, costo))
                 {
                     MessageBox.Show("Movimiento registrado con éxito.");
                     CargarHistorial();
@@ -140,6 +141,11 @@ namespace KEYSTOCK_Desktop.Formularios
             {
                 e.Handled = true;
             }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

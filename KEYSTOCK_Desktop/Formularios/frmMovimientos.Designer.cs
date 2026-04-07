@@ -42,6 +42,8 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label5 = new System.Windows.Forms.Label();
             this.cmbProveedores = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtCosto = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvMovimientos)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -94,7 +96,7 @@
             // 
             // btnRegistrar
             // 
-            this.btnRegistrar.Location = new System.Drawing.Point(392, 19);
+            this.btnRegistrar.Location = new System.Drawing.Point(493, 76);
             this.btnRegistrar.Name = "btnRegistrar";
             this.btnRegistrar.Size = new System.Drawing.Size(75, 23);
             this.btnRegistrar.TabIndex = 5;
@@ -141,6 +143,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.txtCosto);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.cmbProveedores);
             this.groupBox1.Controls.Add(this.label3);
@@ -154,7 +158,7 @@
             this.groupBox1.Controls.Add(this.cmbTipo);
             this.groupBox1.Location = new System.Drawing.Point(29, 22);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(486, 117);
+            this.groupBox1.Size = new System.Drawing.Size(578, 117);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Entradas / Salidas";
@@ -177,6 +181,23 @@
             this.cmbProveedores.Size = new System.Drawing.Size(121, 21);
             this.cmbProveedores.TabIndex = 12;
             this.cmbProveedores.ValueMember = "ProductoID";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(346, 17);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(34, 13);
+            this.label6.TabIndex = 15;
+            this.label6.Text = "Costo";
+            // 
+            // txtCosto
+            // 
+            this.txtCosto.Location = new System.Drawing.Point(346, 33);
+            this.txtCosto.Name = "txtCosto";
+            this.txtCosto.Size = new System.Drawing.Size(121, 20);
+            this.txtCosto.TabIndex = 14;
+            this.txtCosto.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // frmMovimientos
             // 
@@ -211,5 +232,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox cmbProveedores;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox txtCosto;
     }
 }

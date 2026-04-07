@@ -11,7 +11,7 @@ namespace KEYSTOCK_Desktop.CapaDatos
     internal class MovimientoDAL
     {
         private Conexion conexion = new Conexion();
-        public bool RegistrarMovimiento(int productoId, int usuarioId, int? proveedorId, string tipo, int cantidad, string referencia)
+        public bool RegistrarMovimiento(int productoId, int usuarioId, int? proveedorId, string tipo, int cantidad, string referencia, decimal costo)
         {
             using (var conn = conexion.LeerConexion())
             {
@@ -19,22 +19,22 @@ namespace KEYSTOCK_Desktop.CapaDatos
                 SqlTransaction tran = conn.BeginTransaction();
                 try
                 {
-                    string queryMov = @"INSERT INTO MovimientosInventario (ProductoID, UsuarioID, ProveedorID, TipoMovimiento, Cantidad, FechaHora, Referencia) 
-                                VALUES (@pId, @uId, @prId, @tipo, @cant, GETDATE(), @ref)";
+                    // Insertamos incluyendo el CostoUnitario
+                    string queryMov = @"INSERT INTO MovimientosInventario 
+                (ProductoID, UsuarioID, ProveedorID, TipoMovimiento, Cantidad, FechaHora, Referencia, CostoUnitario) 
+                VALUES (@pId, @uId, @prId, @tipo, @cant, GETDATE(), @ref, @costo)";
 
                     SqlCommand cmdMov = new SqlCommand(queryMov, conn, tran);
                     cmdMov.Parameters.AddWithValue("@pId", productoId);
                     cmdMov.Parameters.AddWithValue("@uId", usuarioId);
-
-                    // Si no hay proveedor (en caso de salidas), enviamos NULL a la DB
                     cmdMov.Parameters.AddWithValue("@prId", (object)proveedorId ?? DBNull.Value);
-
                     cmdMov.Parameters.AddWithValue("@tipo", tipo);
                     cmdMov.Parameters.AddWithValue("@cant", cantidad);
                     cmdMov.Parameters.AddWithValue("@ref", referencia);
+                    cmdMov.Parameters.AddWithValue("@costo", costo);
                     cmdMov.ExecuteNonQuery();
 
-                    // Lógica de actualización de Stock...
+                    // Actualización automática de StockActual en la tabla Productos
                     string operacion = (tipo == "Entrada") ? "+" : "-";
                     string queryStock = $"UPDATE Productos SET StockActual = StockActual {operacion} @cant WHERE ProductoID = @pId";
                     SqlCommand cmdStock = new SqlCommand(queryStock, conn, tran);
@@ -45,11 +45,7 @@ namespace KEYSTOCK_Desktop.CapaDatos
                     tran.Commit();
                     return true;
                 }
-                catch (Exception ex)
-                {
-                    tran.Rollback();
-                    throw ex; // Re-lanzamos para ver el error en la UI
-                }
+                catch { tran.Rollback(); throw; }
             }
         }
 
