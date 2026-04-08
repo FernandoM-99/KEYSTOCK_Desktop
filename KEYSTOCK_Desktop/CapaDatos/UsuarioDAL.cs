@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KEYSTOCK_Desktop.Modelos;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -15,6 +16,9 @@ namespace KEYSTOCK_Desktop.CapaDatos
         {
             using (var conn = conexion.LeerConexion())
             {
+                conn.Open();
+
+                conexion.SetContextoSeguridad(conn, UserSession.Nombre, Environment.MachineName);
                 string passwordHasheada = SecurityHelper.HashPassword(pass);
 
                 string query = @"INSERT INTO Usuarios (NombreCompleto, Email, PasswordHash, RoleID, Activo) 
@@ -26,7 +30,7 @@ namespace KEYSTOCK_Desktop.CapaDatos
                 cmd.Parameters.AddWithValue("@role", roleId);
                 cmd.Parameters.AddWithValue("@act", activo);
                 cmd.Parameters.AddWithValue("@user", activo);
-                conn.Open();
+                
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
@@ -71,6 +75,9 @@ namespace KEYSTOCK_Desktop.CapaDatos
         {
             using (var conn = conexion.LeerConexion())
             {
+                conn.Open();
+
+                conexion.SetContextoSeguridad(conn, UserSession.Nombre, Environment.MachineName);
                 // Usamos una lógica COALESCE o CASE en SQL: 
                 // Si @pass es vacío o NULL, se queda la Contrasena actual.
                 string passwordParaDB = string.IsNullOrEmpty(pass) ? "" : SecurityHelper.HashPassword(pass);
@@ -93,7 +100,6 @@ namespace KEYSTOCK_Desktop.CapaDatos
                 cmd.Parameters.AddWithValue("@act", activo);
                 cmd.Parameters.AddWithValue("@user", username);
 
-                conn.Open();
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
@@ -103,10 +109,13 @@ namespace KEYSTOCK_Desktop.CapaDatos
         {
             using (var conn = conexion.LeerConexion())
             {
+                conn.Open();
+
+                conexion.SetContextoSeguridad(conn, UserSession.Nombre, Environment.MachineName);
+
                 string query = "UPDATE Usuarios SET Activo = 0 WHERE UsuarioID = @id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@id", id);
-                conn.Open();
                 return cmd.ExecuteNonQuery() > 0;
             }
         }

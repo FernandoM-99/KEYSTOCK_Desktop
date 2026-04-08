@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KEYSTOCK_Desktop.Modelos;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -13,6 +14,9 @@ namespace KEYSTOCK_Desktop.CapaDatos
         {
             using (var conn = conexion.LeerConexion())
             {
+                conn.Open();
+
+                conexion.SetContextoSeguridad(conn, UserSession.Nombre, Environment.MachineName);
                 string query = @"INSERT INTO ProductosProveedores (ProductoID, ProveedorID, CostoUltimaCompra, SKUProveedor) 
                                  VALUES (@pId, @prId, @costo, @skuProv)";
 
@@ -22,7 +26,6 @@ namespace KEYSTOCK_Desktop.CapaDatos
                 cmd.Parameters.AddWithValue("@costo", costo);
                 cmd.Parameters.AddWithValue("@skuProv", skuProv);
 
-                conn.Open();
                 return cmd.ExecuteNonQuery() > 0;
             }
         }

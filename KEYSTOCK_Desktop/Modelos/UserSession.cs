@@ -11,5 +11,6 @@ namespace KEYSTOCK_Desktop.Modelos
         public static int UsuarioID;
         public static string Nombre;
         public static int RoleID;
+        public static string HostName = Environment.MachineName;
     }
 }

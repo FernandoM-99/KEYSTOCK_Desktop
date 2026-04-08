@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KEYSTOCK_Desktop.Modelos;
 
 namespace KEYSTOCK_Desktop.CapaDatos
 {
@@ -31,6 +32,10 @@ namespace KEYSTOCK_Desktop.CapaDatos
         {
             using (var conn = conexion.LeerConexion())
             {
+                conn.Open();
+
+                conexion.SetContextoSeguridad(conn, UserSession.Nombre, Environment.MachineName);
+
                 string query = "INSERT INTO Productos (SKU, Nombre, Descripcion, StockActual) VALUES (@sku, @nom, @desc, @stock)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@sku", sku);
@@ -38,7 +43,6 @@ namespace KEYSTOCK_Desktop.CapaDatos
                 cmd.Parameters.AddWithValue("@desc", desc);
                 cmd.Parameters.AddWithValue("@stock", stock);
 
-                conn.Open();
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
@@ -47,6 +51,10 @@ namespace KEYSTOCK_Desktop.CapaDatos
         {
             using (var conn = conexion.LeerConexion())
             {
+                conn.Open();
+
+                conexion.SetContextoSeguridad(conn, UserSession.Nombre, Environment.MachineName);
+
                 string query = "UPDATE Productos SET SKU=@sku, Nombre=@nom, Descripcion=@desc, StockActual=@stock WHERE ProductoID=@id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@id", id);
@@ -55,7 +63,6 @@ namespace KEYSTOCK_Desktop.CapaDatos
                 cmd.Parameters.AddWithValue("@desc", desc);
                 cmd.Parameters.AddWithValue("@stock", stock);
 
-                conn.Open();
                 return cmd.ExecuteNonQuery() > 0;
             }
         }
@@ -65,11 +72,13 @@ namespace KEYSTOCK_Desktop.CapaDatos
         {
             using (var conn = conexion.LeerConexion())
             {
+                conn.Open();
+
+                conexion.SetContextoSeguridad(conn, UserSession.Nombre, Environment.MachineName);
                 string query = "DELETE FROM Productos WHERE ProductoID=@id";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@id", id);
 
-                conn.Open();
                 return cmd.ExecuteNonQuery() > 0;
             }
         }

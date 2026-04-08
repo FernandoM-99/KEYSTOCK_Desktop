@@ -12,6 +12,7 @@ namespace KEYSTOCK_Desktop.Formularios
 {
     public partial class frmProveedores : Form
     {
+        private int idProveedorSeleccionado = 0;
         ProveedorDAL dal = new ProveedorDAL();
         public frmProveedores()
         {
@@ -69,30 +70,70 @@ namespace KEYSTOCK_Desktop.Formularios
         }
         private void CargarGrid()
         {
+            // Listar todos los proveedores
             dgvProveedores.DataSource = dal.Listar();
+            if (dgvProveedores.Columns.Contains("ProveedorID"))
+                dgvProveedores.Columns["ProveedorID"].Visible = false;
         }
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtEmpresa.Text))
-            {
-                MessageBox.Show("El nombre de la empresa es obligatorio.");
-                return;
-            }
-
             if (dal.Insertar(txtEmpresa.Text, txtContacto.Text, txtEmail.Text, txtTelefono.Text))
             {
-                MessageBox.Show("Proveedor registrado con éxito.");
+                MessageBox.Show("Proveedor registrado.");
                 CargarGrid();
                 Limpiar();
             }
         }
         private void Limpiar()
         {
+            idProveedorSeleccionado = 0;
             txtEmpresa.Clear();
             txtContacto.Clear();
             txtEmail.Clear();
             txtTelefono.Clear();
+            chkActivo.Checked = true;
         }
+
+        private void dgvProveedores_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                idProveedorSeleccionado = Convert.ToInt32(dgvProveedores.CurrentRow.Cells["ProveedorID"].Value);
+                txtEmpresa.Text = dgvProveedores.CurrentRow.Cells["NombreEmpresa"].Value.ToString();
+                txtContacto.Text = dgvProveedores.CurrentRow.Cells["NombreContacto"].Value.ToString();
+                txtEmail.Text = dgvProveedores.CurrentRow.Cells["Email"].Value.ToString();
+                txtTelefono.Text = dgvProveedores.CurrentRow.Cells["Telefono"].Value.ToString();
+                chkActivo.Checked = Convert.ToBoolean(dgvProveedores.CurrentRow.Cells["Activo"].Value);
+            }
+        }
+
+        private void btnEditar_Click(object sender, EventArgs e)
+        {
+            if (idProveedorSeleccionado == 0) return;
+
+            if (dal.Editar(idProveedorSeleccionado, txtEmpresa.Text, txtContacto.Text, txtEmail.Text, txtTelefono.Text, chkActivo.Checked))
+            {
+                MessageBox.Show("Datos actualizados.");
+                CargarGrid();
+                Limpiar();
+            }
+        }
+
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            if (idProveedorSeleccionado == 0) return;
+
+            DialogResult res = MessageBox.Show("¿Inactivar proveedor?", "Confirmar", MessageBoxButtons.YesNo);
+            if (res == DialogResult.Yes)
+            {
+                if (dal.Inactivar(idProveedorSeleccionado))
+                {
+                    CargarGrid();
+                    Limpiar();
+                }
+            }
+        }
+
     }
 }

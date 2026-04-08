@@ -20,21 +20,36 @@ namespace KEYSTOCK_Desktop.Formularios
         }
 
         private void frmPrincipal_Load(object sender, EventArgs e)
+{
+    try 
+    {
+        // 1. Información del usuario desde la sesión
+        lblUsuario.Text = $"Sesión: {UserSession.Nombre}";
+
+        // 2. Obtener Nombre del Host (Equipo local) dinámicamente
+        string nombreHost = Environment.MachineName;
+
+        // 3. Obtener Nombre de la Base de Datos desde la cadena de conexión
+        string nombreDB = "Desconocida";
+        using (var conn = new Conexion().LeerConexion())
         {
-            try
-            {
-                // Verifica que estos Labels existan en el Diseñador
-                lblUsuario.Text = $"Sesión: {UserSession.Nombre}";
-                lblServer.Text = "Host: LAPTOP-ICAMTCRR | DB: Sistema_Gestion_Inventarios";
-                lblFecha.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-            }
-            catch (Exception ex)
-            {
-                // Esto te dirá exactamente qué objeto falta o qué falló
-                MessageBox.Show("Error crítico en el Dashboard: " + ex.Message, "Error de Inicio", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Application.Exit();
-            }
+            // Database es una propiedad de SqlConnection que devuelve el Initial Catalog
+            nombreDB = conn.Database;
         }
+
+        // 4. Asignación dinámica al label
+        lblServer.Text = $"Host: {nombreHost} | DB: {nombreDB}";
+
+        // 5. Inicializar fecha
+        lblFecha.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show("Error crítico al inicializar Dashboard: " + ex.Message, 
+                        "Error de Sistema", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        Application.Exit();
+    }
+}
 
         private void LlenarComboProductos()
         {
