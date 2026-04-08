@@ -20,36 +20,38 @@ namespace KEYSTOCK_Desktop.Formularios
         }
 
         private void frmPrincipal_Load(object sender, EventArgs e)
-{
-    try 
-    {
-        // 1. Información del usuario desde la sesión
-        lblUsuario.Text = $"Sesión: {UserSession.Nombre}";
-
-        // 2. Obtener Nombre del Host (Equipo local) dinámicamente
-        string nombreHost = Environment.MachineName;
-
-        // 3. Obtener Nombre de la Base de Datos desde la cadena de conexión
-        string nombreDB = "Desconocida";
-        using (var conn = new Conexion().LeerConexion())
         {
-            // Database es una propiedad de SqlConnection que devuelve el Initial Catalog
-            nombreDB = conn.Database;
+            try 
+            {
+                // 1. Información del usuario desde la sesión
+                lblUsuario.Text = $"Sesión: {UserSession.Nombre}";
+
+                // 2. Obtener Nombre del Host (Equipo local) dinámicamente
+                string nombreHost = Environment.MachineName;
+
+                // 3. Obtener Nombre de la Base de Datos desde la cadena de conexión
+                string nombreDB = "Desconocida";
+                using (var conn = new Conexion().LeerConexion())
+                {
+                    // Database es una propiedad de SqlConnection que devuelve el Initial Catalog
+                    nombreDB = conn.Database;
+                }
+
+                // 4. Asignación dinámica al label
+                lblServer.Text = $"Host: {nombreHost} | DB: {nombreDB}";
+
+                // 5. Inicializar fecha
+                lblFecha.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error crítico al inicializar Dashboard: " + ex.Message, 
+                                "Error de Sistema", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+            }
+            LlenarComboProductos();
+            ConfigurarColumnasCarrito();
         }
-
-        // 4. Asignación dinámica al label
-        lblServer.Text = $"Host: {nombreHost} | DB: {nombreDB}";
-
-        // 5. Inicializar fecha
-        lblFecha.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-    }
-    catch (Exception ex)
-    {
-        MessageBox.Show("Error crítico al inicializar Dashboard: " + ex.Message, 
-                        "Error de Sistema", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        Application.Exit();
-    }
-}
 
         private void LlenarComboProductos()
         {
@@ -228,8 +230,15 @@ namespace KEYSTOCK_Desktop.Formularios
         private void puntoDeVentaToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
-            pnlPOS.Visible = true;
-            pnlPOS.BringToFront();
+            if (pnlPOS.Visible == true)
+            {
+                pnlPOS.Visible = false;
+            }
+            else 
+            {
+                pnlPOS.Visible = true;
+                //pnlPOS.BringToFront();
+            }
         }
 
         private void btnAgregar_Click(object sender, EventArgs e)
