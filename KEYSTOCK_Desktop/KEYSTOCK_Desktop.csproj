@@ -53,6 +53,7 @@
     <Compile Include="CapaDatos\ProductosProveedoresDAL.cs" />
     <Compile Include="CapaDatos\ProveedorDAL.cs" />
     <Compile Include="CapaDatos\RolesDAL.cs" />
+    <Compile Include="CapaDatos\SecurityHelper.cs" />
     <Compile Include="CapaDatos\UsuarioDAL.cs" />
     <Compile Include="Formularios\frmLogin.cs">
       <SubType>Form</SubType>

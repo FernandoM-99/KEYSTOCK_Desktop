@@ -12,5 +12,7 @@ namespace KEYSTOCK_Desktop.Modelos
         public string NombreCompleto { get; set; }
         public int RoleID { get; set; }
         public bool Activo { get; set; }
+        public string Email { get; set; }
+        public string Username { get; set; }
     }
 }

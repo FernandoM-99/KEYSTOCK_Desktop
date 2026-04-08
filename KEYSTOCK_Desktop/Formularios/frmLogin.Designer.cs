@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLogin));
             this.label1 = new System.Windows.Forms.Label();
             this.btnIngresar = new System.Windows.Forms.Button();
-            this.txtEmail = new System.Windows.Forms.TextBox();
+            this.txtUser = new System.Windows.Forms.TextBox();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.lblMensaje = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -57,24 +57,24 @@
             this.btnIngresar.Location = new System.Drawing.Point(115, 309);
             this.btnIngresar.Name = "btnIngresar";
             this.btnIngresar.Size = new System.Drawing.Size(75, 23);
-            this.btnIngresar.TabIndex = 1;
+            this.btnIngresar.TabIndex = 3;
             this.btnIngresar.Text = "Ingresar";
             this.btnIngresar.UseVisualStyleBackColor = true;
             this.btnIngresar.Click += new System.EventHandler(this.btnIngresar_Click);
             // 
-            // txtEmail
+            // txtUser
             // 
-            this.txtEmail.Location = new System.Drawing.Point(59, 215);
-            this.txtEmail.Name = "txtEmail";
-            this.txtEmail.Size = new System.Drawing.Size(195, 20);
-            this.txtEmail.TabIndex = 2;
+            this.txtUser.Location = new System.Drawing.Point(59, 215);
+            this.txtUser.Name = "txtUser";
+            this.txtUser.Size = new System.Drawing.Size(195, 20);
+            this.txtUser.TabIndex = 1;
             // 
             // txtPassword
             // 
             this.txtPassword.Location = new System.Drawing.Point(59, 267);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.Size = new System.Drawing.Size(195, 20);
-            this.txtPassword.TabIndex = 4;
+            this.txtPassword.TabIndex = 2;
             this.txtPassword.UseSystemPasswordChar = true;
             // 
             // lblMensaje
@@ -104,9 +104,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(137, 194);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(35, 13);
+            this.label2.Size = new System.Drawing.Size(46, 13);
             this.label2.TabIndex = 7;
-            this.label2.Text = "Email:";
+            this.label2.Text = "Usuario:";
             this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label3
@@ -141,7 +141,7 @@
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.lblMensaje);
             this.Controls.Add(this.txtPassword);
-            this.Controls.Add(this.txtEmail);
+            this.Controls.Add(this.txtUser);
             this.Controls.Add(this.btnIngresar);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -161,7 +161,7 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnIngresar;
-        private System.Windows.Forms.TextBox txtEmail;
+        private System.Windows.Forms.TextBox txtUser;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Label lblMensaje;
         private System.Windows.Forms.PictureBox pictureBox1;

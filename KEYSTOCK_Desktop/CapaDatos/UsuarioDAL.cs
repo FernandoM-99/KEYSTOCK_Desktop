@@ -11,18 +11,21 @@ namespace KEYSTOCK_Desktop.CapaDatos
     internal class UsuarioDAL
     {
         private Conexion conexion = new Conexion();
-        public bool InsertarUsuario(string nombre, string email, string pass, int roleId, bool activo)
+        public bool InsertarUsuario(string nombre, string email, string pass, int roleId, bool activo, string username)
         {
             using (var conn = conexion.LeerConexion())
             {
+                string passwordHasheada = SecurityHelper.HashPassword(pass);
+
                 string query = @"INSERT INTO Usuarios (NombreCompleto, Email, PasswordHash, RoleID, Activo) 
                          VALUES (@nom, @email, @pass, @role, @act)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@nom", nombre);
                 cmd.Parameters.AddWithValue("@email", email);
-                cmd.Parameters.AddWithValue("@pass", pass); // Recuerda usar Hashing en producción
+                cmd.Parameters.AddWithValue("@pass", passwordHasheada); // Recuerda usar Hashing en producción
                 cmd.Parameters.AddWithValue("@role", roleId);
                 cmd.Parameters.AddWithValue("@act", activo);
+                cmd.Parameters.AddWithValue("@user", activo);
                 conn.Open();
                 return cmd.ExecuteNonQuery() > 0;
             }
@@ -45,7 +48,7 @@ namespace KEYSTOCK_Desktop.CapaDatos
             using (var conn = conexion.LeerConexion())
             {
                 // Consulta que une Usuarios con Roles para mayor claridad visual
-                string query = @"SELECT U.UsuarioID, U.NombreCompleto, U.Email, R.NombreRol, U.Activo 
+                string query = @"SELECT U.UsuarioID, U.NombreCompleto, U.Email, R.NombreRol, U.Activo, u.Username 
                          FROM Usuarios U 
                          INNER JOIN Roles R ON U.RoleID = R.RoleID";
 
@@ -63,24 +66,83 @@ namespace KEYSTOCK_Desktop.CapaDatos
             }
             return tabla;
         }
-        public bool EditarUsuario(int id, string nombre, string email, int roleId, bool activo)
+        // Método para Modificar Usuario
+        public bool EditarUsuario(int id, string nombre, string email, string pass, int roleId, bool activo, string username)
         {
             using (var conn = conexion.LeerConexion())
             {
-                string query = @"UPDATE Usuarios 
-                         SET NombreCompleto = @nom, Email = @email, RoleID = @role, Activo = @act 
-                         WHERE UsuarioID = @id";
+                // Usamos una lógica COALESCE o CASE en SQL: 
+                // Si @pass es vacío o NULL, se queda la Contrasena actual.
+                string passwordParaDB = string.IsNullOrEmpty(pass) ? "" : SecurityHelper.HashPassword(pass);
+
+                string query = @"UPDATE Usuarios SET 
+                         NombreCompleto=@nom, 
+                         Email=@email, 
+                         PasswordHash = CASE WHEN @pass = '' OR @pass IS NULL THEN PasswordHash ELSE @pass END,
+                         RoleID=@rid, 
+                         Activo=@act, 
+                         Username=@user 
+                         WHERE UsuarioID=@id";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.AddWithValue("@nom", nombre);
-                cmd.Parameters.AddWithValue("@email", email);
-                cmd.Parameters.AddWithValue("@role", roleId);
+                cmd.Parameters.AddWithValue("@email", (object)email ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@pass", (object)passwordParaDB ?? string.Empty);
+                cmd.Parameters.AddWithValue("@rid", roleId);
                 cmd.Parameters.AddWithValue("@act", activo);
+                cmd.Parameters.AddWithValue("@user", username);
 
                 conn.Open();
                 return cmd.ExecuteNonQuery() > 0;
             }
+        }
+
+        // Método para Inactivar (Eliminar Lógico)
+        public bool InactivarUsuario(int id)
+        {
+            using (var conn = conexion.LeerConexion())
+            {
+                string query = "UPDATE Usuarios SET Activo = 0 WHERE UsuarioID = @id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@id", id);
+                conn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
+        public bool ExisteUsuario(string username, int idActual = 0)
+        {
+            using (var conn = conexion.LeerConexion())
+            {
+                string query = "SELECT COUNT(*) FROM Usuarios WHERE Username = @user AND UsuarioID <> @id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@user", username);
+                cmd.Parameters.AddWithValue("@id", idActual);
+                conn.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+        }
+
+        // Listado filtrado por estado
+        public DataTable ListarUsuarios(bool soloActivos = true)
+        {
+            DataTable tabla = new DataTable();
+            using (var conn = conexion.LeerConexion())
+            {
+                string query = @"SELECT U.UsuarioID, U.NombreCompleto, U.Email, U.Username, 
+                         R.NombreRol, U.Activo, U.RoleID 
+                         FROM Usuarios U 
+                         INNER JOIN Roles R ON U.RoleID = R.RoleID 
+                         WHERE U.Activo = @estado 
+                         ORDER BY U.NombreCompleto ASC";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@estado", soloActivos ? 1 : 0);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(tabla);
+            }
+            return tabla;
         }
     }
 

@@ -1,14 +1,8 @@
 ﻿using KEYSTOCK_Desktop.CapaDatos;
 using KEYSTOCK_Desktop.Modelos;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace KEYSTOCK_Desktop
@@ -26,8 +20,8 @@ namespace KEYSTOCK_Desktop
             lblMensaje.Text = "";
             lblMensaje.ForeColor = Color.Red;
 
-            // 2. Validación de campos vacíos (Interfaz)
-            if (string.IsNullOrWhiteSpace(txtEmail.Text) || string.IsNullOrWhiteSpace(txtPassword.Text))
+            // 2. Validación de campos vacíos
+            if (string.IsNullOrWhiteSpace(txtUser.Text) || string.IsNullOrWhiteSpace(txtPassword.Text))
             {
                 lblMensaje.Text = "⚠️ Los campos no pueden estar vacíos.";
                 return;
@@ -35,53 +29,59 @@ namespace KEYSTOCK_Desktop
 
             try
             {
+                // Hasheo de la contraseña ingresada para comparar con la base de datos
+                string hashedInput = SecurityHelper.HashPassword(txtPassword.Text);
+
                 using (SqlConnection conn = new Conexion().LeerConexion())
                 {
-                    // Consulta basada en tu diagrama: Usuarios -> Roles
-                    string query = "SELECT UsuarioID, NombreCompleto, RoleID FROM Usuarios " +
-                                   "WHERE Email = @email AND PasswordHash = @pass AND Activo = 1";
+                    // Consulta validando Nombre de Usuario, Contraseña Hasheada y Estado Activo
+                    string query = @"SELECT UsuarioID, NombreCompleto, RoleID 
+                           FROM Usuarios 
+                           WHERE Username = @user AND PasswordHash = @pass AND Activo = 1";
 
                     SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
-                    cmd.Parameters.AddWithValue("@pass", txtPassword.Text.Trim());
+                    cmd.Parameters.AddWithValue("@user", txtUser.Text.Trim());
+                    cmd.Parameters.AddWithValue("@pass", hashedInput);
 
                     conn.Open();
-                    SqlDataReader reader = cmd.ExecuteReader();
-
-                    if (reader.Read())
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        // Éxito: Guardar sesión y entrar
-                        UserSession.UsuarioID = (int)reader["UsuarioID"];
-                        UserSession.Nombre = reader["NombreCompleto"].ToString();
-                        UserSession.RoleID = (int)reader["RoleID"];
+                        if (reader.Read())
+                        {
+                            // 3. Éxito: Guardar datos en la sesión global
+                            UserSession.UsuarioID = Convert.ToInt32(reader["UsuarioID"]);
+                            UserSession.Nombre = reader["NombreCompleto"].ToString();
+                            UserSession.RoleID = Convert.ToInt32(reader["RoleID"]);
 
-                        this.DialogResult = DialogResult.OK;
-                        this.Close();
-                    }
-                    else
-                    {
-                        // 3. Error de Credenciales
-                        lblMensaje.Text = "❌ Correo o contraseña incorrectos.";
+                            // IMPORTANTE: Avisamos al Program.cs que el login fue correcto y cerramos este form
+                            // Esto evita que el proceso muera al abrir el Dashboard
+                            this.DialogResult = DialogResult.OK;
+                            this.Close();
+                        }
+                        else
+                        {
+                            lblMensaje.Text = "❌ Usuario o contraseña incorrectos.";
+                        }
                     }
                 }
             }
             catch (SqlException ex)
             {
-                // 4. Manejo del Error de Conexión (El error 26 que te apareció)
+                // Manejo de errores de conexión técnica
                 if (ex.Number == 26 || ex.Number == 2)
                     lblMensaje.Text = "⚠️ No se pudo localizar el servidor SQL.";
                 else if (ex.Number == 4060)
                     lblMensaje.Text = "⚠️ La base de datos no es accesible.";
                 else
                     lblMensaje.Text = "🚨 Error técnico: " + ex.Message;
-
-                // Log para el desarrollador en la consola
-                Console.WriteLine("Error Detallado: " + ex.ToString());
             }
         }
 
         private void label2_Click(object sender, EventArgs e)
+
         {
+
+
 
         }
 

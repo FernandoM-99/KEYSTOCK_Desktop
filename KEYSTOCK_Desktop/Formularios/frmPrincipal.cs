@@ -21,24 +21,18 @@ namespace KEYSTOCK_Desktop.Formularios
 
         private void frmPrincipal_Load(object sender, EventArgs e)
         {
-            // 1. Llenamos la información del usuario desde la sesión global
-            // Usamos la información que guardamos durante el Login
-            lblUsuario.Text = $"Sesión: {UserSession.Nombre}";
-
-            // 2. Información del servidor (LAPTOP-ICAMTCRR\Ferna)
-            lblServer.Text = "Host: LAPTOP-ICAMTCRR | DB: Sistema_Gestion_Inventarios";
-
-            // 3. Inicializamos la fecha para que no aparezca vacía al inicio
-            lblFecha.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-
             try
             {
-                ConfigurarColumnasCarrito();
-                LlenarComboProductos();
+                // Verifica que estos Labels existan en el Diseñador
+                lblUsuario.Text = $"Sesión: {UserSession.Nombre}";
+                lblServer.Text = "Host: LAPTOP-ICAMTCRR | DB: Sistema_Gestion_Inventarios";
+                lblFecha.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar datos iniciales: " + ex.Message);
+                // Esto te dirá exactamente qué objeto falta o qué falló
+                MessageBox.Show("Error crítico en el Dashboard: " + ex.Message, "Error de Inicio", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
             }
         }
 

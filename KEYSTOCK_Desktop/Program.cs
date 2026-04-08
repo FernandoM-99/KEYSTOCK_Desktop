@@ -19,10 +19,10 @@ namespace KEYSTOCK_Desktop
             Application.SetCompatibleTextRenderingDefault(false);
 
             frmLogin login = new frmLogin();
-
-            // Si el login devuelve OK, lanzamos la pantalla principal
+            // Mostramos el login como un diálogo
             if (login.ShowDialog() == DialogResult.OK)
             {
+                // Si el login fue exitoso, lanzamos el Dashboard como el proceso principal
                 Application.Run(new frmPrincipal());
             }
         }
