@@ -104,7 +104,7 @@ namespace KEYSTOCK_Desktop.Formularios
                 txtContacto.Text = dgvProveedores.CurrentRow.Cells["NombreContacto"].Value.ToString();
                 txtEmail.Text = dgvProveedores.CurrentRow.Cells["Email"].Value.ToString();
                 txtTelefono.Text = dgvProveedores.CurrentRow.Cells["Telefono"].Value.ToString();
-                chkActivo.Checked = Convert.ToBoolean(dgvProveedores.CurrentRow.Cells["Activo"].Value);
+                //chkActivo.Checked = Convert.ToBoolean(dgvProveedores.CurrentRow.Cells["Activo"].Value);
             }
         }
 
