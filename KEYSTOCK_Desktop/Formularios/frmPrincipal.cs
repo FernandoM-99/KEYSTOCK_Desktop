@@ -229,6 +229,7 @@ namespace KEYSTOCK_Desktop.Formularios
 
         private void puntoDeVentaToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            LlenarComboProductos();
 
             if (pnlPOS.Visible == true)
             {

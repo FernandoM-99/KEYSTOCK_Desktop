@@ -41,6 +41,11 @@ namespace KEYSTOCK_Desktop.Formularios
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
+            if (!ValidacionHelper.FormularioEsValido(this.Controls))
+            {
+                return; // Si NO es válido, detenemos la ejecución
+            }
+
             if (string.IsNullOrWhiteSpace(txtNombreRol.Text)) return;
 
             if (dal.Insertar(txtNombreRol.Text.Trim()))
@@ -63,6 +68,11 @@ namespace KEYSTOCK_Desktop.Formularios
         private void btnEditar_Click(object sender, EventArgs e)
         {
             if (idRolSeleccionado == 0) return;
+
+            if (!ValidacionHelper.FormularioEsValido(this.Controls))
+            {
+                return; // Si NO es válido, detenemos la ejecución
+            }
 
             if (dal.Editar(idRolSeleccionado, txtNombreRol.Text.Trim()))
             {

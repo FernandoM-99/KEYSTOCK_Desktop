@@ -78,6 +78,11 @@ namespace KEYSTOCK_Desktop.Formularios
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
+            if (!ValidacionHelper.FormularioEsValido(this.Controls))
+            {
+                return; // Si NO es válido, detenemos la ejecución
+            }
+
             if (dal.Insertar(txtEmpresa.Text, txtContacto.Text, txtEmail.Text, txtTelefono.Text))
             {
                 MessageBox.Show("Proveedor registrado.");
@@ -111,6 +116,11 @@ namespace KEYSTOCK_Desktop.Formularios
         private void btnEditar_Click(object sender, EventArgs e)
         {
             if (idProveedorSeleccionado == 0) return;
+
+            if (!ValidacionHelper.FormularioEsValido(this.Controls))
+            {
+                return; // Si NO es válido, detenemos la ejecución
+            }
 
             if (dal.Editar(idProveedorSeleccionado, txtEmpresa.Text, txtContacto.Text, txtEmail.Text, txtTelefono.Text, chkActivo.Checked))
             {

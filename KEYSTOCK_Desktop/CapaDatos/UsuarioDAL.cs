@@ -21,16 +21,20 @@ namespace KEYSTOCK_Desktop.CapaDatos
                 conexion.SetContextoSeguridad(conn, UserSession.Nombre, Environment.MachineName);
                 string passwordHasheada = SecurityHelper.HashPassword(pass);
 
-                string query = @"INSERT INTO Usuarios (NombreCompleto, Email, PasswordHash, RoleID, Activo) 
-                         VALUES (@nom, @email, @pass, @role, @act)";
+                // CORRECCIÓN: Se agregó la columna Username y el valor @user a la consulta SQL
+                string query = @"INSERT INTO Usuarios (NombreCompleto, Email, PasswordHash, RoleID, Activo, Username) 
+                         VALUES (@nom, @email, @pass, @role, @act, @user)";
+
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@nom", nombre);
                 cmd.Parameters.AddWithValue("@email", email);
-                cmd.Parameters.AddWithValue("@pass", passwordHasheada); // Recuerda usar Hashing en producción
+                cmd.Parameters.AddWithValue("@pass", passwordHasheada);
                 cmd.Parameters.AddWithValue("@role", roleId);
                 cmd.Parameters.AddWithValue("@act", activo);
-                cmd.Parameters.AddWithValue("@user", activo);
-                
+
+                // CORRECCIÓN: Se asigna la variable 'username' correcta (antes le asignabas 'activo')
+                cmd.Parameters.AddWithValue("@user", username);
+
                 return cmd.ExecuteNonQuery() > 0;
             }
         }

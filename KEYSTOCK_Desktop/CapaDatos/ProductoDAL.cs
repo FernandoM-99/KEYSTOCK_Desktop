@@ -95,5 +95,23 @@ namespace KEYSTOCK_Desktop.CapaDatos
             }
             return tabla;
         }
+
+        // Agrega este método dentro de tu clase ProductoDAL
+        public bool ExisteSKU(string sku, int idActual = 0)
+        {
+            using (var conn = conexion.LeerConexion())
+            {
+                // Cuenta cuántos productos tienen ese SKU, excluyendo el ID del producto que estamos editando (si aplica)
+                string query = "SELECT COUNT(*) FROM Productos WHERE SKU = @sku AND ProductoID <> @id";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@sku", sku);
+                cmd.Parameters.AddWithValue("@id", idActual);
+
+                conn.Open();
+                int coincidencias = Convert.ToInt32(cmd.ExecuteScalar());
+
+                return coincidencias > 0; // Retorna true si ya existe
+            }
+        }
     }
 }

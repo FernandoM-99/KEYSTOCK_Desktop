@@ -22,6 +22,7 @@ namespace KEYSTOCK_Desktop.Formularios
         {
             LlenarComboRoles();
             CargarUsuarios();
+            btnModificar.Enabled = false;
         }
 
         private void LlenarComboRoles()
@@ -32,24 +33,6 @@ namespace KEYSTOCK_Desktop.Formularios
             cmbRoles.ValueMember = "RoleID";
         }
 
-        private void btnGuardar_Click(object sender, EventArgs e)
-        {
-            UsuarioDAL dalUser = new UsuarioDAL();
-            bool exito = dalUser.InsertarUsuario(
-                txtNombre.Text,
-                txtEmail.Text,
-                txtPassword.Text,
-                (int)cmbRoles.SelectedValue,
-                chkActivo.Checked,
-                txtUsuario.Text
-            );
-
-            if (exito)
-            {
-                MessageBox.Show("Usuario creado con éxito.");
-                CargarUsuarios();
-            }
-        }
         // Esta es la función que te faltaba en el código anterior
         private void CargarUsuarios(bool soloActivos = true)
         {
@@ -66,6 +49,8 @@ namespace KEYSTOCK_Desktop.Formularios
 
         private void dgvUsuarios_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            btnModificar.Enabled = true;
+
             if (e.RowIndex >= 0)
             {
                 idUsuarioSeleccionado = Convert.ToInt32(dgvUsuarios.CurrentRow.Cells["UsuarioID"].Value);
@@ -78,10 +63,19 @@ namespace KEYSTOCK_Desktop.Formularios
                 // Limpiamos el campo de password por seguridad y para indicar que es opcional al editar
                 txtPassword.Clear();
             }
+            else
+            {
+                return;
+            }
         }
 
         private void btnCrear_Click(object sender, EventArgs e)
         {
+            if (!ValidacionHelper.FormularioEsValido(this.Controls))
+            {
+                return; // Si NO es válido, detenemos la ejecución
+            }
+
             UsuarioDAL dalUser = new UsuarioDAL();
 
             // VALIDACIÓN: Nombre de usuario único
@@ -109,9 +103,15 @@ namespace KEYSTOCK_Desktop.Formularios
         {
             if (idUsuarioSeleccionado == 0) return;
 
+            // CORRECCIÓN: Pasamos txtPassword como el segundo parámetro para ignorarlo
+            if (!ValidacionHelper.FormularioEsValido(this.Controls, txtPassword))
+            {
+                return;
+            }
+
             UsuarioDAL dal = new UsuarioDAL();
 
-            // 1. Validación de nombre de usuario único (excluyendo al actual)
+            // 1. Validación de nombre de usuario único
             if (dal.ExisteUsuario(txtUsuario.Text, idUsuarioSeleccionado))
             {
                 MessageBox.Show("Este nombre de usuario ya está ocupado.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -119,12 +119,11 @@ namespace KEYSTOCK_Desktop.Formularios
             }
 
             // 2. Ejecutar edición
-            // Si txtPassword.Text está vacío, la DAL mantendrá la contraseña anterior
             bool exito = dal.EditarUsuario(
                 idUsuarioSeleccionado,
                 txtNombre.Text,
                 txtEmail.Text,
-                txtPassword.Text, // Se envía tal cual (vacío o con texto nuevo)
+                txtPassword.Text, // Se envía vacío o con el nuevo texto, la DAL hará el resto
                 (int)cmbRoles.SelectedValue,
                 chkActivo.Checked,
                 txtUsuario.Text
@@ -136,6 +135,8 @@ namespace KEYSTOCK_Desktop.Formularios
                 CargarUsuarios(!chkVerInactivos.Checked);
                 LimpiarCampos();
             }
+
+            btnModificar.Enabled = false;
         }
 
         // Botón ELIMINAR: Ventana emergente e inactivación

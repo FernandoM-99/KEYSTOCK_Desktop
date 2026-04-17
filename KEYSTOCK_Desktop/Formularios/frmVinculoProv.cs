@@ -36,6 +36,11 @@ namespace KEYSTOCK_Desktop.Formularios
 
         private void btnVincular_Click(object sender, EventArgs e)
         {
+            if (!ValidacionHelper.FormularioEsValido(this.Controls))
+            {
+                return; // Si NO es válido, detenemos la ejecución
+            }
+
             if (cmbProductos.SelectedValue == null || cmbProveedores.SelectedValue == null) return;
 
             int pId = Convert.ToInt32(cmbProductos.SelectedValue);

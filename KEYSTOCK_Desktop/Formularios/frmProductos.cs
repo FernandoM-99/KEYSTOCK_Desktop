@@ -22,6 +22,7 @@ namespace KEYSTOCK_Desktop.Formularios
         private void frmProductos_Load(object sender, EventArgs e)
         {
             RefrescarGrid();
+            btnActualizar.Enabled = false;
         }
         private void RefrescarGrid()
         {
@@ -30,11 +31,23 @@ namespace KEYSTOCK_Desktop.Formularios
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
-            // Validación básica
-            if (string.IsNullOrWhiteSpace(txtNombre.Text))
+            if (!ValidacionHelper.FormularioEsValido(this.Controls))
             {
-                MessageBox.Show("El nombre es obligatorio.");
-                return;
+                return; // Si NO es válido, detenemos la ejecución
+            }
+            //// Validación básica
+            //if (string.IsNullOrWhiteSpace(txtNombre.Text))
+            //{
+            //    MessageBox.Show("El nombre es obligatorio.");
+            //    return;
+            //}
+
+            if (objetoDAL.ExisteSKU(txtSKU.Text))
+            {
+                MessageBox.Show("El SKU ingresado ya existe en otro producto. Por favor, asigne un SKU diferente.",
+                                "Validación de SKU", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtSKU.Focus(); // Regresa el cursor al campo del SKU
+                return; // Detiene el proceso
             }
 
             bool exito = objetoDAL.Insertar(
@@ -71,6 +84,8 @@ namespace KEYSTOCK_Desktop.Formularios
         private int idSeleccionado = 0;
         private void dgvProductos_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            btnActualizar.Enabled = true;
+
             if (e.RowIndex >= 0)
             {
                 idSeleccionado = Convert.ToInt32(dgvProductos.CurrentRow.Cells["ProductoID"].Value);
@@ -83,13 +98,21 @@ namespace KEYSTOCK_Desktop.Formularios
 
         private void btnActualizar_Click(object sender, EventArgs e)
         {
+            if (!ValidacionHelper.FormularioEsValido(this.Controls))
+            {
+                return; // Si NO es válido, detenemos la ejecución
+            }
+
             if (idSeleccionado == 0) return;
+
 
             if (objetoDAL.Editar(idSeleccionado, txtSKU.Text, txtNombre.Text, txtDescripcion.Text, Convert.ToInt32(txtStock.Text)))
             {
                 MessageBox.Show("Producto actualizado.");
                 RefrescarGrid();
             }
+
+            btnActualizar.Enabled = false;
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)
@@ -110,6 +133,37 @@ namespace KEYSTOCK_Desktop.Formularios
         private void btnLimpiar_Click(object sender, EventArgs e)
         {
             LimpiarCampos();
+        }
+
+        // Método genérico para validar que no haya campos vacíos en el formulario
+        private bool ValidarCamposRequeridos(Control.ControlCollection controles)
+        {
+            foreach (Control control in controles)
+            {
+                // Validar TextBoxes
+                if (control is TextBox txt && string.IsNullOrWhiteSpace(txt.Text))
+                {
+                    MessageBox.Show($"El campo {txt.Name.Replace("txt", "")} no puede estar vacío.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txt.Focus();
+                    return false;
+                }
+
+                // Validar ComboBoxes (Que tengan un elemento seleccionado)
+                if (control is ComboBox cmb && cmb.SelectedIndex == -1)
+                {
+                    MessageBox.Show($"Debe seleccionar una opción en {cmb.Name.Replace("cmb", "")}.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    cmb.Focus();
+                    return false;
+                }
+
+                // Si hay paneles o GroupBoxes, aplicamos recursividad para revisar sus controles hijos
+                if (control.HasChildren)
+                {
+                    if (!ValidarCamposRequeridos(control.Controls))
+                        return false;
+                }
+            }
+            return true; // Todo está correcto
         }
     }
 }
