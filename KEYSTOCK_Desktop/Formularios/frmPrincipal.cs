@@ -244,31 +244,73 @@ namespace KEYSTOCK_Desktop.Formularios
 
         private void btnAgregar_Click(object sender, EventArgs e)
         {
-            // 1. Validaciones básicas
+            // 1. Validaciones básicas de campos vacíos
             if (cmbProductos.SelectedValue == null || string.IsNullOrWhiteSpace(txtCantidad.Text))
             {
-                MessageBox.Show("Seleccione un producto y asigne una cantidad.");
+                MessageBox.Show("Seleccione un producto y asigne una cantidad.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // 2. Obtener datos de los controles
+            // 2. Obtener datos de los controles y validar formato numérico
             int idProd = Convert.ToInt32(cmbProductos.SelectedValue);
             string nombre = cmbProductos.Text;
-            int cant = Convert.ToInt32(txtCantidad.Text);
+            int cantAgregada;
 
-            // Usamos el precio como "CostoUnitario" para la bitácora
-            decimal precio = decimal.Parse(txtPrecio.Text);
-            decimal subtotal = cant * precio;
+            if (!int.TryParse(txtCantidad.Text, out cantAgregada) || cantAgregada <= 0)
+            {
+                MessageBox.Show("Por favor, ingrese una cantidad válida mayor a cero.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtCantidad.Focus();
+                return;
+            }
 
-            // 3. Agregar la fila (Ahora sí encontrará las columnas)
-            dgvCarrito.Rows.Add(idProd, nombre, cant, precio, subtotal);
+            decimal precio;
+            if (!decimal.TryParse(txtPrecio.Text, out precio) || precio < 0)
+            {
+                MessageBox.Show("Por favor, ingrese un precio válido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtPrecio.Focus();
+                return;
+            }
 
-            // 4. Limpiar campos para la siguiente entrada
+            // =========================================================
+            // 3. NUEVA VALIDACIÓN DE STOCK
+            // =========================================================
+            MovimientoDAL movDal = new MovimientoDAL();
+            int stockDisponible = movDal.ObtenerStockActual(idProd); // Consultamos el stock real en SQL
+
+            // Revisar si este producto ya fue agregado al carrito previamente para sumar su cantidad
+            int cantidadYaEnCarrito = 0;
+            foreach (DataGridViewRow fila in dgvCarrito.Rows)
+            {
+                if (fila.Cells["ProductoID"].Value != null && Convert.ToInt32(fila.Cells["ProductoID"].Value) == idProd)
+                {
+                    cantidadYaEnCarrito += Convert.ToInt32(fila.Cells["Cantidad"].Value);
+                }
+            }
+
+            // Validar: (Lo que quiere agregar + Lo que ya está en el carrito) no debe superar el stock
+            if ((cantAgregada + cantidadYaEnCarrito) > stockDisponible)
+            {
+                MessageBox.Show($"No hay stock suficiente para '{nombre}'.\n\n" +
+                                $"Stock en inventario: {stockDisponible} unidades.\n" +
+                                $"Cantidad en carrito: {cantidadYaEnCarrito} unidades.",
+                                "Stock Insuficiente", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtCantidad.Focus();
+                return; // Detenemos el proceso para que no se agregue a la tabla
+            }
+            // =========================================================
+
+            // 4. Calcular subtotal y agregar la fila si pasó la validación
+            decimal subtotal = cantAgregada * precio;
+            dgvCarrito.Rows.Add(idProd, nombre, cantAgregada, precio, subtotal);
+
+            // 5. Limpiar campos para la siguiente entrada
             txtCantidad.Clear();
             txtPrecio.Clear();
             cmbProductos.SelectedIndex = -1;
-        }
 
+            // (Opcional) Regresar el foco al combobox para seguir escaneando o buscando productos
+            cmbProductos.Focus();
+        }
         private void ConfigurarColumnasCarrito()
         {
             // Limpiamos cualquier residuo previo

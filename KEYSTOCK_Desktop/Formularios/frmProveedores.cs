@@ -67,6 +67,7 @@ namespace KEYSTOCK_Desktop.Formularios
         private void frmProveedores_Load(object sender, EventArgs e)
         {
             CargarGrid();
+            btnEditar.Enabled = false;
         }
         private void CargarGrid()
         {
@@ -102,6 +103,7 @@ namespace KEYSTOCK_Desktop.Formularios
 
         private void dgvProveedores_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            btnEditar.Enabled = true;
             if (e.RowIndex >= 0)
             {
                 idProveedorSeleccionado = Convert.ToInt32(dgvProveedores.CurrentRow.Cells["ProveedorID"].Value);
@@ -128,6 +130,7 @@ namespace KEYSTOCK_Desktop.Formularios
                 CargarGrid();
                 Limpiar();
             }
+            btnEditar.Enabled = false;
         }
 
         private void btnEliminar_Click(object sender, EventArgs e)
