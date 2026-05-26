@@ -1,14 +1,11 @@
 ﻿using KEYSTOCK_Desktop.CapaDatos;
 using KEYSTOCK_Desktop.Modelos;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing.Printing;
+using System.Drawing;
 
 namespace KEYSTOCK_Desktop.Formularios
 {
@@ -56,22 +53,19 @@ namespace KEYSTOCK_Desktop.Formularios
         private void LlenarComboProductos()
         {
             ProductoDAL prodDal = new ProductoDAL();
-            DataTable dt = prodDal.ObtenerListaSimple();
+            // Usamos Listar() en lugar de ObtenerListaSimple para tener todas las columnas
+            DataTable dt = prodDal.Listar();
 
             if (dt != null && dt.Rows.Count > 0)
             {
-                // Limpiar antes de asignar
                 cmbProductos.DataSource = null;
-
-                // Configurar mapeo
                 cmbProductos.DisplayMember = "Nombre";
                 cmbProductos.ValueMember = "ProductoID";
-
-                // Asignar fuente de datos
                 cmbProductos.DataSource = dt;
                 cmbProductos.SelectedIndex = -1;
             }
         }
+
 
 
         private void tmrReloj_Tick(object sender, EventArgs e)
@@ -208,6 +202,12 @@ namespace KEYSTOCK_Desktop.Formularios
 
         private void btnFinalizarVenta_Click(object sender, EventArgs e)
         {
+            if (dgvCarrito.Rows.Count == 0)
+            {
+                MessageBox.Show("El carrito está vacío.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
             MovimientoDAL movDal = new MovimientoDAL();
 
             foreach (DataGridViewRow fila in dgvCarrito.Rows)
@@ -218,13 +218,89 @@ namespace KEYSTOCK_Desktop.Formularios
                     int cant = Convert.ToInt32(fila.Cells["Cantidad"].Value);
                     decimal precio = Convert.ToDecimal(fila.Cells["Precio"].Value);
 
-                    // Se registra como Salida y con Referencia "VENTA POS"
                     movDal.RegistrarMovimiento(id, UserSession.UsuarioID, null, "Salida", cant, "VENTA POS", precio);
                 }
             }
 
+            // MANDAR A IMPRIMIR
+            ImprimirTicket();
+
+            // Limpiar carrito y reiniciar total
             dgvCarrito.Rows.Clear();
-            MessageBox.Show("Venta registrada con éxito.");
+            CalcularTotal();
+            MessageBox.Show("Venta registrada y ticket enviado a la impresora.", "Éxito", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        // =======================================================
+        // LÓGICA DE IMPRESIÓN DEL TICKET
+        // =======================================================
+        private void ImprimirTicket()
+        {
+            PrintDocument pd = new PrintDocument();
+            // Nos suscribimos al evento que dibuja el contenido de la página
+            pd.PrintPage += new PrintPageEventHandler(DibujarTicket);
+
+            try
+            {
+                // pd.Print() envía directo a la impresora predeterminada de Windows.
+                // Si no hay impresora física, suele abrir "Guardar como PDF".
+                pd.Print();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al intentar imprimir: " + ex.Message, "Error de Impresión", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void DibujarTicket(object sender, PrintPageEventArgs e)
+        {
+            Graphics graficos = e.Graphics;
+            Font fuenteNormal = new Font("Courier New", 10);
+            Font fuenteNegrita = new Font("Courier New", 12, FontStyle.Bold);
+
+            int startX = 10;
+            int startY = 10;
+            int offset = 40;
+
+            // Encabezado
+            graficos.DrawString("  KEYSTOCK DESKTOP  ", fuenteNegrita, Brushes.Black, startX + 50, startY);
+            graficos.DrawString("   TICKET DE VENTA  ", fuenteNormal, Brushes.Black, startX + 50, startY + 20);
+            graficos.DrawString($"Fecha: {DateTime.Now}", fuenteNormal, Brushes.Black, startX, startY + offset);
+            graficos.DrawString($"Cajero: {UserSession.Nombre}", fuenteNormal, Brushes.Black, startX, startY + offset + 20);
+            graficos.DrawString("----------------------------------------", fuenteNormal, Brushes.Black, startX, startY + offset + 40);
+
+            offset += 60;
+            graficos.DrawString("CANT  PRODUCTO             SUBTOTAL", fuenteNegrita, Brushes.Black, startX, startY + offset);
+            offset += 20;
+
+            // Filas del carrito
+            decimal granTotal = 0;
+            foreach (DataGridViewRow fila in dgvCarrito.Rows)
+            {
+                if (fila.Cells["ProductoID"].Value == null) continue;
+
+                string cant = fila.Cells["Cantidad"].Value.ToString().PadRight(5);
+
+                string prod = fila.Cells["Nombre"].Value.ToString();
+                // Recortamos el nombre si es muy largo para que no rompa el formato del ticket
+                if (prod.Length > 20) prod = prod.Substring(0, 20);
+                prod = prod.PadRight(21);
+
+                decimal subtotal = Convert.ToDecimal(fila.Cells["Subtotal"].Value);
+                granTotal += subtotal;
+
+                string sub = subtotal.ToString("C2");
+
+                graficos.DrawString($"{cant} {prod} {sub}", fuenteNormal, Brushes.Black, startX, startY + offset);
+                offset += 20;
+            }
+
+            // Pie de ticket
+            graficos.DrawString("----------------------------------------", fuenteNormal, Brushes.Black, startX, startY + offset);
+            offset += 20;
+            graficos.DrawString($"TOTAL A PAGAR: {granTotal:C2}", fuenteNegrita, Brushes.Black, startX, startY + offset);
+            offset += 30;
+            graficos.DrawString("   ¡Gracias por su preferencia!   ", fuenteNormal, Brushes.Black, startX + 20, startY + offset);
         }
 
         private void puntoDeVentaToolStripMenuItem_Click(object sender, EventArgs e)
@@ -272,7 +348,7 @@ namespace KEYSTOCK_Desktop.Formularios
             }
 
             // =========================================================
-            // 3. NUEVA VALIDACIÓN DE STOCK
+            // 3. VALIDACIÓN DE STOCK
             // =========================================================
             MovimientoDAL movDal = new MovimientoDAL();
             int stockDisponible = movDal.ObtenerStockActual(idProd); // Consultamos el stock real en SQL
@@ -305,10 +381,13 @@ namespace KEYSTOCK_Desktop.Formularios
 
             // 5. Limpiar campos para la siguiente entrada
             txtCantidad.Clear();
-            txtPrecio.Clear();
             cmbProductos.SelectedIndex = -1;
+            // Nota: txtPrecio y lblProveedor se limpian solos gracias al evento SelectedIndexChanged del ComboBox
 
-            // (Opcional) Regresar el foco al combobox para seguir escaneando o buscando productos
+            // 6. Calcular el Gran Total
+            CalcularTotal();
+
+            // Regresar el foco al combobox para seguir escaneando o buscando productos
             cmbProductos.Focus();
         }
         private void ConfigurarColumnasCarrito()
@@ -328,6 +407,37 @@ namespace KEYSTOCK_Desktop.Formularios
 
             // Ajustar el diseño
             dgvCarrito.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        }
+
+        private void cmbProductos_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Si hay un producto seleccionado, extraemos su data de la fila seleccionada
+            if (cmbProductos.SelectedIndex != -1 && cmbProductos.SelectedItem is DataRowView row)
+            {
+                txtPrecio.Text = row["PrecioUnitario"].ToString();
+
+                // Suponiendo que agregaste el label lblProveedor a tu diseño:
+                txtProveedor.Text = $"{row["Proveedor"]}";
+            }
+            else
+            {
+                txtPrecio.Clear();
+                if (txtProveedor != null) txtProveedor.Text = "Proveedor: ---";
+            }
+        }
+
+        private void CalcularTotal()
+        {
+            decimal granTotal = 0;
+            foreach (DataGridViewRow fila in dgvCarrito.Rows)
+            {
+                if (fila.Cells["Subtotal"].Value != null)
+                {
+                    granTotal += Convert.ToDecimal(fila.Cells["Subtotal"].Value);
+                }
+            }
+            // Suponiendo que agregaste el label lblTotal a tu diseño:
+            txtTotal.Text = $"TOTAL: {granTotal:C2}";
         }
     }
 }

@@ -52,24 +52,28 @@
             this.lblFecha = new System.Windows.Forms.ToolStripStatusLabel();
             this.tmrReloj = new System.Windows.Forms.Timer(this.components);
             this.pnlPOS = new System.Windows.Forms.Panel();
-            this.btnFinalizarVenta = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnAgregar = new System.Windows.Forms.Button();
+            this.cmbProductos = new System.Windows.Forms.ComboBox();
+            this.txtCantidad = new System.Windows.Forms.TextBox();
+            this.txtPrecio = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.btnFinalizarVenta = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.dgvCarrito = new System.Windows.Forms.DataGridView();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtPrecio = new System.Windows.Forms.TextBox();
-            this.txtCantidad = new System.Windows.Forms.TextBox();
-            this.cmbProductos = new System.Windows.Forms.ComboBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.btnAgregar = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txtProveedor = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtTotal = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.pnlPOS.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvCarrito)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvCarrito)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -235,6 +239,8 @@
             // 
             // pnlPOS
             // 
+            this.pnlPOS.Controls.Add(this.txtTotal);
+            this.pnlPOS.Controls.Add(this.label6);
             this.pnlPOS.Controls.Add(this.groupBox1);
             this.pnlPOS.Controls.Add(this.pictureBox1);
             this.pnlPOS.Controls.Add(this.btnFinalizarVenta);
@@ -242,19 +248,61 @@
             this.pnlPOS.Controls.Add(this.dgvCarrito);
             this.pnlPOS.Location = new System.Drawing.Point(12, 110);
             this.pnlPOS.Name = "pnlPOS";
-            this.pnlPOS.Size = new System.Drawing.Size(776, 289);
+            this.pnlPOS.Size = new System.Drawing.Size(776, 304);
             this.pnlPOS.TabIndex = 5;
             this.pnlPOS.Visible = false;
             // 
-            // btnFinalizarVenta
+            // groupBox1
             // 
-            this.btnFinalizarVenta.Location = new System.Drawing.Point(88, 215);
-            this.btnFinalizarVenta.Name = "btnFinalizarVenta";
-            this.btnFinalizarVenta.Size = new System.Drawing.Size(110, 23);
-            this.btnFinalizarVenta.TabIndex = 8;
-            this.btnFinalizarVenta.Text = "Finalizar Venta";
-            this.btnFinalizarVenta.UseVisualStyleBackColor = true;
-            this.btnFinalizarVenta.Click += new System.EventHandler(this.btnFinalizarVenta_Click);
+            this.groupBox1.Controls.Add(this.txtProveedor);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.btnAgregar);
+            this.groupBox1.Controls.Add(this.cmbProductos);
+            this.groupBox1.Controls.Add(this.txtCantidad);
+            this.groupBox1.Controls.Add(this.txtPrecio);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Location = new System.Drawing.Point(16, 23);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(247, 217);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Agregar Producto";
+            // 
+            // btnAgregar
+            // 
+            this.btnAgregar.Location = new System.Drawing.Point(150, 120);
+            this.btnAgregar.Name = "btnAgregar";
+            this.btnAgregar.Size = new System.Drawing.Size(75, 23);
+            this.btnAgregar.TabIndex = 10;
+            this.btnAgregar.Text = "Agregar";
+            this.btnAgregar.UseVisualStyleBackColor = true;
+            this.btnAgregar.Click += new System.EventHandler(this.btnAgregar_Click);
+            // 
+            // cmbProductos
+            // 
+            this.cmbProductos.FormattingEnabled = true;
+            this.cmbProductos.Location = new System.Drawing.Point(15, 37);
+            this.cmbProductos.Name = "cmbProductos";
+            this.cmbProductos.Size = new System.Drawing.Size(121, 21);
+            this.cmbProductos.TabIndex = 0;
+            this.cmbProductos.SelectedIndexChanged += new System.EventHandler(this.cmbProductos_SelectedIndexChanged);
+            // 
+            // txtCantidad
+            // 
+            this.txtCantidad.Location = new System.Drawing.Point(15, 77);
+            this.txtCantidad.Name = "txtCantidad";
+            this.txtCantidad.Size = new System.Drawing.Size(100, 20);
+            this.txtCantidad.TabIndex = 1;
+            // 
+            // txtPrecio
+            // 
+            this.txtPrecio.Location = new System.Drawing.Point(15, 120);
+            this.txtPrecio.Name = "txtPrecio";
+            this.txtPrecio.ReadOnly = true;
+            this.txtPrecio.Size = new System.Drawing.Size(100, 20);
+            this.txtPrecio.TabIndex = 2;
             // 
             // label4
             // 
@@ -264,6 +312,44 @@
             this.label4.Size = new System.Drawing.Size(50, 13);
             this.label4.TabIndex = 7;
             this.label4.Text = "Producto";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(13, 61);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(49, 13);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Cantidad";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(13, 104);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(83, 13);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Precio de Venta";
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::KEYSTOCK_Desktop.Properties.Resources.carrito_de_compras;
+            this.pictureBox1.Location = new System.Drawing.Point(403, 23);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(37, 33);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox1.TabIndex = 9;
+            this.pictureBox1.TabStop = false;
+            // 
+            // btnFinalizarVenta
+            // 
+            this.btnFinalizarVenta.Location = new System.Drawing.Point(85, 246);
+            this.btnFinalizarVenta.Name = "btnFinalizarVenta";
+            this.btnFinalizarVenta.Size = new System.Drawing.Size(110, 23);
+            this.btnFinalizarVenta.TabIndex = 8;
+            this.btnFinalizarVenta.Text = "Finalizar Venta";
+            this.btnFinalizarVenta.UseVisualStyleBackColor = true;
+            this.btnFinalizarVenta.Click += new System.EventHandler(this.btnFinalizarVenta_Click);
             // 
             // label3
             // 
@@ -283,81 +369,39 @@
             this.dgvCarrito.Size = new System.Drawing.Size(448, 210);
             this.dgvCarrito.TabIndex = 5;
             // 
-            // label2
+            // label5
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 104);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(83, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "Precio de Venta";
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(13, 151);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(56, 13);
+            this.label5.TabIndex = 12;
+            this.label5.Text = "Proveedor";
             // 
-            // label1
+            // txtProveedor
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 61);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(49, 13);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Cantidad";
+            this.txtProveedor.Location = new System.Drawing.Point(15, 167);
+            this.txtProveedor.Name = "txtProveedor";
+            this.txtProveedor.ReadOnly = true;
+            this.txtProveedor.Size = new System.Drawing.Size(100, 20);
+            this.txtProveedor.TabIndex = 13;
             // 
-            // txtPrecio
+            // label6
             // 
-            this.txtPrecio.Location = new System.Drawing.Point(15, 120);
-            this.txtPrecio.Name = "txtPrecio";
-            this.txtPrecio.Size = new System.Drawing.Size(100, 20);
-            this.txtPrecio.TabIndex = 2;
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(617, 275);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(34, 13);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "Total:";
             // 
-            // txtCantidad
+            // txtTotal
             // 
-            this.txtCantidad.Location = new System.Drawing.Point(15, 77);
-            this.txtCantidad.Name = "txtCantidad";
-            this.txtCantidad.Size = new System.Drawing.Size(100, 20);
-            this.txtCantidad.TabIndex = 1;
-            // 
-            // cmbProductos
-            // 
-            this.cmbProductos.FormattingEnabled = true;
-            this.cmbProductos.Location = new System.Drawing.Point(15, 37);
-            this.cmbProductos.Name = "cmbProductos";
-            this.cmbProductos.Size = new System.Drawing.Size(121, 21);
-            this.cmbProductos.TabIndex = 0;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::KEYSTOCK_Desktop.Properties.Resources.carrito_de_compras;
-            this.pictureBox1.Location = new System.Drawing.Point(403, 23);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(37, 33);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 9;
-            this.pictureBox1.TabStop = false;
-            // 
-            // btnAgregar
-            // 
-            this.btnAgregar.Location = new System.Drawing.Point(150, 120);
-            this.btnAgregar.Name = "btnAgregar";
-            this.btnAgregar.Size = new System.Drawing.Size(75, 23);
-            this.btnAgregar.TabIndex = 10;
-            this.btnAgregar.Text = "Agregar";
-            this.btnAgregar.UseVisualStyleBackColor = true;
-            this.btnAgregar.Click += new System.EventHandler(this.btnAgregar_Click);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.btnAgregar);
-            this.groupBox1.Controls.Add(this.cmbProductos);
-            this.groupBox1.Controls.Add(this.txtCantidad);
-            this.groupBox1.Controls.Add(this.txtPrecio);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Location = new System.Drawing.Point(16, 23);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(247, 166);
-            this.groupBox1.TabIndex = 11;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Agregar Producto";
+            this.txtTotal.Location = new System.Drawing.Point(657, 272);
+            this.txtTotal.Name = "txtTotal";
+            this.txtTotal.ReadOnly = true;
+            this.txtTotal.Size = new System.Drawing.Size(100, 20);
+            this.txtTotal.TabIndex = 14;
             // 
             // frmPrincipal
             // 
@@ -381,10 +425,10 @@
             this.statusStrip1.PerformLayout();
             this.pnlPOS.ResumeLayout(false);
             this.pnlPOS.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvCarrito)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvCarrito)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -426,5 +470,9 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button btnAgregar;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.TextBox txtProveedor;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txtTotal;
+        private System.Windows.Forms.Label label6;
     }
 }
